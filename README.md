@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AlgoLens
+
+An interactive algorithm visualization and complexity analysis platform built with Next.js.
+
+## What is AlgoLens?
+
+AlgoLens is a production-quality web application for visualizing code execution, debugging algorithms, and understanding time & space complexity. It uses an event-driven architecture where code execution produces structured events that drive all visualizations.
+
+## Features
+
+- **Live Code Execution** — Run JavaScript algorithms and watch execution step by step
+- **Line-by-line Debugging** — Current line highlighted in Monaco editor with breakpoint support
+- **Variable Inspector** — Watch variables change in real time with expandable trees
+- **Array Visualization** — Animated bars showing sorting/searching progress with state coloring
+- **Call Stack Panel** — Inspect function calls and return values
+- **Complexity Analysis** — Theoretical Big-O with observed runtime metrics
+- **Execution Timeline** — Scrub through any point in execution history
+- **Time-Travel Debugging** — Step forward and backward through execution
+- **Performance Charts** — Run algorithms across multiple input sizes and compare to reference curves
+- **Recursion Tree** — Visualize recursive call trees for recursive algorithms
+- **Algorithm Library** — 9 built-in algorithms (sorting, searching, recursion)
+- **Speed Control** — 0.25× to 8× playback plus instant mode
+
+## Algorithm Library
+
+| Algorithm | Category | Time Complexity |
+|-----------|----------|----------------|
+| Bubble Sort | Sorting | O(n²) |
+| Selection Sort | Sorting | O(n²) |
+| Insertion Sort | Sorting | O(n²) |
+| Merge Sort | Sorting | O(n log n) |
+| Quick Sort | Sorting | O(n log n) avg |
+| Linear Search | Searching | O(n) |
+| Binary Search | Searching | O(log n) |
+| Fibonacci | Recursion | O(2ⁿ) |
+| Factorial | Recursion | O(n) |
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Open http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Type check
+npm run typecheck  # or: npx tsc --noEmit
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Lint
+npm run lint
 
-## Learn More
+# Run tests
+npm test
 
-To learn more about Next.js, take a look at the following resources:
+# Build for production
+npm run build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Architecture
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+AlgoLens uses an event-driven architecture:
 
-## Deploy on Vercel
+```
+User Code
+   ↓ (instrumentation)
+JavaScript Engine
+   ↓ (execution)
+Event Stream (ExecutionEvent[])
+   ↓ (event store / replay)
+Derived State (variables, arrays, call stack, metrics)
+   ↓ (React rendering)
+Visualizations (editor, array, timeline, complexity)
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for full details.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Adding a New Algorithm
+
+1. Create `src/algorithms/<category>/<name>.ts`
+2. Export an `AlgorithmDefinition` with metadata, `starterCode`, `inputSchema`, and `defaultInput`
+3. Register it in `src/algorithms/index.ts`
+
+In the starter code, use these tracking helpers for visualization:
+- `__mkarray__('name', arr)` — creates a tracked array that emits events on access/mutation
+- `__compare__(a, b, '>')` — emits a comparison event and returns the result
+- `__markswap__('arr', i, j)` — emits a swap event (you still do the swap manually)
+- `__fn_enter__('name', ...args)` / `__fn_exit__('name', result)` — tracks function calls
+
+## Adding a New Visualizer
+
+Create a new component in `src/components/visualization/` that reads from `useEventStore()`. The store provides:
+- `arrayStates` — current state of all tracked arrays
+- `variables` — current variable values
+- `callStack` — current call stack frames
+- `currentLine` — currently executing line number
+- `events` / `currentEventIndex` — full event history for time-travel
+
+## Security
+
+User code runs in an isolated sandbox:
+- Dangerous globals (window, document, fetch, localStorage, etc.) are shadowed
+- Execution is limited to 10 seconds and 50,000 events
+- Code runs in strict mode inside an IIFE

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(npm test *)",
+      "Bash(node -e ' *)",
+      "Bash(node *)",
+      "Bash(npx vitest *)",
+      "Bash(pkill -f \"next dev\")"
+    ]
+  }
+}

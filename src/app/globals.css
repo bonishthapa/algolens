@@ -1,26 +1,95 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 222 47% 11%;
+  --foreground: 213 31% 91%;
+  --card: 222 47% 14%;
+  --card-foreground: 213 31% 91%;
+  --popover: 222 47% 11%;
+  --popover-foreground: 213 31% 91%;
+  --primary: 210 100% 60%;
+  --primary-foreground: 222 47% 11%;
+  --secondary: 222 47% 20%;
+  --secondary-foreground: 213 31% 91%;
+  --muted: 223 47% 18%;
+  --muted-foreground: 215 20% 55%;
+  --accent: 210 100% 60%;
+  --accent-foreground: 222 47% 11%;
+  --destructive: 0 84% 60%;
+  --border: 216 34% 20%;
+  --input: 216 34% 20%;
+  --ring: 210 100% 60%;
+  --radius: 0.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.light {
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 98%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 210 100% 45%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222 47% 11%;
+  --destructive: 0 84% 60%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 210 100% 45%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: hsl(var(--border));
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.monaco-editor { font-size: 13px !important; }
+
+.current-line-highlight {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  border-left: 2px solid #3b82f6 !important;
+}
+
+.breakpoint-gutter {
+  background-color: rgba(239, 68, 68, 0.8);
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  margin: auto;
+}
+
+@keyframes var-change {
+  0% { background-color: rgba(234, 179, 8, 0.3); }
+  100% { background-color: transparent; }
+}
+
+.var-changed {
+  animation: var-change 1s ease-out;
+}
+
+@keyframes array-swap {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0); }
+}
+
+.array-swap-anim {
+  animation: array-swap 0.3s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
